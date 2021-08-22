@@ -1,0 +1,196 @@
+Graph
+    1. Directed [ O--->O---->O ]
+    2. Undirected [ O---O---O ]
+
+Important Terms:
+    > Weight : Number assigned with edges. If not given then assume it is of unit one.
+  Degree
+    > In-Degree : No. of edges coming to any perticular node is In-Degree for that node
+    > Out-Degree : No. of edges going from any perticular node is Out-Degree for that node
+    
+
+Implementation
+    1. Adjacency Matrix
+    2. Adjacency List
+
+Traversal
+    1. BFS
+    2. DFS
+
+    Steps for BFS:
+        1. choose any node as starting node
+        2. explore all nodes (nodes connected to starting node)
+        3. choose any node of explored nodes as starting node
+        4. explore nodes
+        5. if there is no node connected to starting node then come back to starting for this node.
+           and start exploring other node.
+        repeat till every nodes visited.
+        Note:-> maintan queue for BFS
+
+    Steps for DFS:
+        1. choose starting node for Traversal
+        2. go to any one of its adjacent node then do same for it.
+        3. repeat till dont finde any adjacent node backtrack to parent node and do same.
+        do till every node visited
+         Note:-> maintan stack for DFS
+
+Cycle Detection
+  Definition: Graph is Cyclic if you found adjacent node that is already visited and not a parent of current node.
+    For Undirected Graph:
+        1. travese Graph using either DFS or BFS.
+        2. maintan visited array and mark visited if node is visited
+        3. maintan parent node for current node
+        4. check every adjacent node not if visited and parent of current node.
+    For Directed Graph:
+
+
+Bipartite
+  Definition: Graph is Bipartite if Graph can be colored with two color such that no any adjacent have same color.
+    1. make color list with two color
+    2. mark adjacent node to opposite color of parent node color.
+    3. check if color of adjacent node opposite to parent node.
+
+    Observation: 
+        1. if Graph contain cycle with odd no. of nodes then it can't be Bipartite otherwise it is Bipartite.
+        2. cycle with even no. is Bipartite and odd no. with no cycle is Bipartite.
+
+
+Topological Sort
+  Definition - Linear ordering of its vertices such that for every Directed edge 'uv' for vertices 'u' to 'v',
+               'u' comes before vertex 'v' in the ordering.
+    -- Onny posible for Directed Acyclic Graph
+    -- so we can also say, if Directed Graph dont have Topological sort means it contain cycle
+    Steps using BFS:
+        0. create an empty list to store Topological sort.
+        1. write indegree of vertices
+        2. start with zero indegree
+        3. delete starting node and also its outgoing edges, and append it on list.
+        4. again write indegree of Graph and do same, can choose any node if indegree is same.
+    Steps using DFS:
+        1. make visited array of 0 to n-1 and stack
+        2. loop over visited array, if not visited then call dfs()
+        3. dfs() will do:
+            i. check for adjacent node, if present then do same for it til no adjacent node found.
+            ii. if no adjacent node is found then backtrack to parent node, and  then put that node in stack
+        4. topo sort result is : pop stack one by one,   --> lastInserted node, secondLast,..........,second, first
+
+
+Shortest Path
+  Definition: Shortest path between source node and target node or every nodes.
+    Steps for non-weighted Undirected Graph (BFS):
+        1. make distance array of lenght N and initially mark all position with infinity.
+        2. start bfs from any source node (as we do regula bfs using queue)
+        3. go to adjacent node and calulate distance, distance = distance of parent + 1(non-weighted means unit dist.)
+        4. update distance array, take minimum of value present in node and calulated distance i.e. min(dist[i], 
+          distCalc )
+
+    Steps for Weighted DAG (DFS):
+        1. get Topological sort
+        2. create distance array of lenght N and mark it with infinity
+        3. loop over Topological sort, and check if dist[node] is not infinity and call dfs()
+        4. calulate distance for adjacent node and if this calulated dist is lesser than dist[node] then 
+           update with minimum
+
+    # Dijkstra:
+        1. define distance array with lenght N and mark all as infinity, mark zero in source node.
+        2. make peiority queue, that will store node and distance and priority queue will always store shorter
+           shorter distance on top.
+        3. calulate distance and update distance array if calulated dist is lesser than privious and then put on 
+           priority queue .
+        4. if no more adjacent node available for any node then start with node on top of priority queue 
+           because that contain shorter distance on top.
+
+       Note: Dijkstra dont work for negative edges
+
+    # Bellman Ford:
+        --> For Directed Graph
+            - work for +ve and -ve edges
+            - Not work for negative cycle
+            - But it will tell you there is any negative cycle
+        --> For Undirected Graph
+            - convert it into Direction Graph
+            - work for +ve edges only, because -ve edges will form cycle if change it to Directed Graph.
+        
+        Steps:
+            1. make dist array of lenght N and mark source node as zero and part from source mark all as infinity.
+            1. relax all the edges N-1 times
+             
+                (U, V) --> set of nodes
+                relaxation:
+                    if ((dist[U] + weight) < dist[V])  then dist[V] = dist[U] + weight
+        result:
+            -> dist would be updated with shortest distance after successfully completion of N-1 relaxations
+
+        Note:
+            1. Applied successfully --> if you try to relax one more time after N-1 times then no more edges should
+               relaxed further.
+            2. Negative Cycle --> if any edge is relaxed after N-1 times then there is Negative Cycle.
+
+    
+Minimum Spanning Tree (MST)
+    Definition: you can convert Graph into Tree such that it contains N nodes and N-1 edges, and any node is 
+                reachable from any node then that tree is Spanning Tree.
+            --> The Spanning Tree among all the Spanning trees for Graph, whose total Weight is minimum is MST.
+            --> Remember: Tree can not have cycle, so MST also.
+
+        # Prim's Algorithm:
+            -> start with first node
+            -> choose minimum Weight edge connected wiht that node and connect that node with this minimum weight edge.
+            -> choose minimum Weight edge connected with these two nodes.
+            -> then connect 3rd and check minimum weight edge with these three nodes.
+            -> if choosing any edge forms a cycle on tree then just ignore that edge and choose anothe minimum weight edge.
+            -> always check for minimum weight edge connected to all nodes. repeat till all nodes are connected.
+
+         Implementation:
+            1. 
+
+        # Kruskal's Algorithm
+            -> select minimum cost edge
+            -> then again select minimum cost edge apart from previous one.
+            -> repeat
+            -> dont consider edge if that forms cycle
+         Implementation:
+            1. sort according to increasing order of cost edge  --> every edge will look like - (cost, u, v)
+            2. choose minimum cost edge from that Sorted list.
+            3. choose minimum edge from sorted list apart from already taken.
+            4. repeat till we finished all edges present in sorted list.
+            5. avoid edge, which forms cycle
+
+Disjoint set    
+    - mostly used in Kruskal Algorithm
+
+    operations:
+        1. To find Parent 
+        2. for Union
+
+Bridges in Graph
+    Definition: those edges on Graph, whose removal will break Graph into two or multiple components.   
+     How to find:
+        1. run dfs with some some changes
+        2. create two dictionaries for intime and lowtime, mark it none initially
+          --> intime : time of contact with node
+          --> lowtime: this is intime of adjacent node that is already visited apart from its parent node
+        3. update lowtime of node if adjacent node is already visited with lowtime[node] = min(lowtime[node], intime[child]) if child != par
+        4. update lowtime to other nodes (while backtracking), lowtime[node] = min(lowtime[node], intime[child])
+        5. check if Bridge is there in Graph.
+         --> Bridge Condition: if intime[node]< lowtime[child]
+
+
+Articulation Point
+    Definition: if removal of any node makes Graph disconnected, then that node is Articulation Point.
+    Condition for Articulation Point:
+        --> lowtime[] >= time[node] andd parent != -1
+    How to find:
+        1.
+    Solution for  Articulation Point:
+        1.
+
+Kosaraju's Algorithm for Strongly connected components in Directed Graph (SCC)
+
+    Steps:
+        1. sort all the nodes in oneder of finishing time   (i.e. Topological sort)
+        2. transpose the Graph i.e. reverse the direction of edges
+        3. apply dfs on transposed Graph according to finishing time we got by Topological sort.
+
+
+
